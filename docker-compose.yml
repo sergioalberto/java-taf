@@ -1,0 +1,64 @@
+version: "3"
+services:
+
+  selenium-hub:
+    image: selenium/hub:3.141.59-uranium
+    container_name: selenium-hub
+    environment:
+      GRID_BROWSER_TIMEOUT: 120000
+      GRID_TIMEOUT: 120000
+      VIRTUAL_HOST: selenium.hub.docker
+    ports:
+      - "4444:4444"
+
+  chrome:
+    image: selenium/node-chrome-debug:3.141.59-uranium
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=selenium-hub
+      - HUB_PORT_4444_TCP_PORT=4444
+    ports:
+      - "5900:5900"
+    volumes:
+      - /dev/shm:/dev/shm
+
+  firefox:
+    image: selenium/node-firefox-debug:3.141.59-uranium
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=selenium-hub
+      - HUB_PORT_4444_TCP_PORT=4444
+    ports:
+      - "5901:5900"
+    volumes:
+      - /dev/shm:/dev/shm
+
+  build-auto-framework:
+    image: sergiogq/containerbuild:v1
+    container_name: build-auto-framework
+    build:
+      context: .
+      dockerfile: Dockerfile_build
+    volumes:
+      - ./target:/app/target
+
+  auto-framework:
+    image: sergiogq/containertest:v1
+    container_name: auto-framework
+    build: .
+
+  smoke-module:
+    image: sergiogq/containertest:v1
+    container_name: smoke-module
+    depends_on:
+      - firefox
+      - chrome
+    environment:
+      - MODULE=smoke.xml
+      - SELENIUM_HUB=selenium-hub
+    volumes:
+      - ./screenshots:/app/screenshots
+      - ./test-output:/app/test-output
+      - ./logfile.log:/app/logfile.log

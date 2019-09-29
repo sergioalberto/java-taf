@@ -1,0 +1,10 @@
+FROM java:8
+FROM maven:alpine
+
+WORKDIR /app
+COPY src/ /app
+COPY pom.xml /app/pom.xml
+
+RUN mvn clean package
+
+ENTRYPOINT mvn package

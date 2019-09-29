@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Basic Suite">
+
+  <parameter name="siteUrl"  value="http://localhost:8000/"/>
+  <parameter name="userEmail"  value="sergioalbertogq@gmail.com"/>
+  <parameter name="userPassword"  value="2w49ZY8W!WiATuY"/>
+  <parameter name="browser"  value="chrome"/>
+  <parameter name="willRunOnDocker"  value="true"/>
+
+  <listeners>
+	<listener class-name="com.sergiogq.taf.commons.TestListener"></listener>
+  </listeners>
+
+  <test name="Basic tests">
+   	<classes>
+		<class name="com.sergiogq.taf.testCases.TC1_VerifyHomePage"></class>
+	</classes>
+  </test> <!-- Test -->
+
+</suite> <!-- Suite -->
