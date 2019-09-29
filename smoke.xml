@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Basic Suite">
 
-  <parameter name="siteUrl"  value="http://localhost:8000/"/>
+  <parameter name="siteUrl"  value="http://192.168.0.4:8000"/>
   <parameter name="userEmail"  value="sergioalbertogq@gmail.com"/>
   <parameter name="userPassword"  value="2w49ZY8W!WiATuY"/>
   <parameter name="browser"  value="chrome"/>

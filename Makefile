@@ -22,16 +22,16 @@ run:
 	@mkdir -p screenshots test-output
 	rm -rf logfile.log
 	touch logfile.log
-	$(DOCKER_COMPOSE_BASE) up -d selenium-hub chrome
+	$(DOCKER_COMPOSE_BASE) up -d selenium-hub chrome wordpress
 	$(DOCKER_COMPOSE_BASE) run --name smoke-module --rm smoke-module
 	$(DOCKER_COMPOSE_BASE) down
 
-.PHONY: run-parallel
-run-parallel:
-	@mkdir -p screenshots test-output
-	rm -rf logfile.log
-	touch logfile.log
-	$(DOCKER_COMPOSE_BASE) -f docker-compose.yml up
+.PHONY: run-app
+run-app:
+	$(DOCKER_COMPOSE_BASE) up -d wordpress
+
+.PHONY: down
+down:
 	$(DOCKER_COMPOSE_BASE) down
 
 .PHONY: clean

@@ -1,9 +1,11 @@
 version: "3"
+
 services:
 
   selenium-hub:
     image: selenium/hub:3.141.59-uranium
     container_name: selenium-hub
+    dns: 8.8.8.8
     environment:
       GRID_BROWSER_TIMEOUT: 120000
       GRID_TIMEOUT: 120000
@@ -13,6 +15,7 @@ services:
 
   chrome:
     image: selenium/node-chrome-debug:3.141.59-uranium
+    dns: 8.8.8.8
     depends_on:
       - selenium-hub
     environment:
@@ -25,6 +28,7 @@ services:
 
   firefox:
     image: selenium/node-firefox-debug:3.141.59-uranium
+    dns: 8.8.8.8
     depends_on:
       - selenium-hub
     environment:
@@ -51,10 +55,14 @@ services:
 
   smoke-module:
     image: sergiogq/containertest:v1
+    dns: 8.8.8.8
     container_name: smoke-module
     depends_on:
       - firefox
       - chrome
+      - wordpress
+    links:
+      - wordpress
     environment:
       - MODULE=smoke.xml
       - SELENIUM_HUB=selenium-hub
@@ -62,3 +70,40 @@ services:
       - ./screenshots:/app/screenshots
       - ./test-output:/app/test-output
       - ./logfile.log:/app/logfile.log
+
+  db:
+    image: sergiogq/db-wp-shopping
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+
+  wordpress:
+    image: sergiogq/app-wp-shopping
+    dns: 8.8.8.8
+    container_name: wordpress
+    volumes:
+      - wp_files:/var/www/html
+    depends_on:
+      - db
+    links:
+    - db
+    expose:
+      - 8000
+    ports:
+      - "8000:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+
+volumes:
+  db_data: {}
+  wp_files: {}
+
